@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
         screenWidth = size.x;
         screenHeight = size.y;
 
-        headAnimBitmap = BitmapFactory.decodeResource(getResources(),
-                R.drawable.head_sprite_sheet);
+        headAnimBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head_sprite_sheet);
 
         snakeAnimView = new SnakeAnimView(this);
         setContentView(snakeAnimView);
@@ -90,15 +89,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public boolean onTouchEvent(MotionEvent motionEvent){
-            startActivity(i);
-            return true;
-        }
-
         private void resume(){
             playingSnake = true;
             ourThread = new Thread(this);
             ourThread.start();
+        }
+
+        public boolean onTouchEvent(MotionEvent motionEvent){
+            startActivity(i);
+            return true;
         }
 
         private void controlFPS() {
@@ -179,6 +178,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
 }
-

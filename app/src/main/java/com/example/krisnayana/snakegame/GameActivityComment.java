@@ -1,3 +1,4 @@
+/*
 package com.example.krisnayana.snakegame;
 
 import android.app.Activity;
@@ -24,7 +25,7 @@ import android.view.SurfaceView;
 import java.io.IOException;
 import java.util.Random;
 
-public class GameActivity extends Activity {
+class GameActivity extends Activity {
 
     Canvas canvas;
     SnakeView snakeView;
@@ -321,3 +322,4 @@ public class GameActivity extends Activity {
         }
     }
 }
+*/
