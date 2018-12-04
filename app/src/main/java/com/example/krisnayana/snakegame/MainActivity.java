@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 canvas.drawText("Snake", 10, 150, paint);
                 paint.setTextSize(25);
                 /*Set teks high score, untuk koordinat y, screenHeight - 50*/
+                Log.e("screenHeight: ", String.valueOf(screenHeight));
                 canvas.drawText("Hi Score: " + hi, 10, screenHeight-50, paint);
 
                 /*Memasang nilai untuk destRect untuk mengatur tata letak dari gambar*/
