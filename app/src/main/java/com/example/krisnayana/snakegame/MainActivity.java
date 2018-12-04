@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         volatile boolean playingSnake;
         Paint paint;
 
+        /*Menampung SnakeAnimView, untuk animasi kepala*/
         public SnakeAnimView(Context context) {
             super(context);
             /*Untuk mengambil holder*/
@@ -122,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /*Melakukan pause pada kegiatan, apabila di pause, maka method ini yang akan berjalan
+        * playingSnake akan berubah menjadi false dan beberapa method dari MainActivity dan GameActivity
+        * akan berhenti*/
         private void pause(){
             playingSnake = false;
             try{
@@ -131,12 +135,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /*Method untuk memulai kembali Thread yang disimpan sebelumnya di ourThread
+        * dan memulainya*/
         private void resume(){
             playingSnake = true;
             ourThread = new Thread(this);
             ourThread.start();
         }
 
+        /*Method untuk mengambil touch user, touch sembarang dan aplikasi akan menuju  pada activity game
+        * karena i menampung intent dari GameActivity*/
         public boolean onTouchEvent(MotionEvent motionEvent){
             startActivity(i);
             return true;
@@ -164,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
             lastFrameTime = System.currentTimeMillis();
         }
 
+        /*Menggambar ular yang akan ditampilkan dalam satu frame*/
         private void draw() {
             /*Apabila ourHolder terdeteksi*/
             if(ourHolder.getSurface().isValid()){
@@ -191,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /*Mengatur gambar yang akan ditampilkan dari sprite sheet*/
         private void update() {
             /*Bitmap kepala dianimasikan dengan melacak dan memilih nomor frame yang harus ditampilkan
             * Setiap update method yang dijalankan, method ini akan meng-kalkulasi sprite yang digunakan dengan variabel
