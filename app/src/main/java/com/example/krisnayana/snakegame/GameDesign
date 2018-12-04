@@ -1,0 +1,15 @@
+#Mengenai Snake Game
+
+Pemain akan memainkan ular yang terbagi atas 3 bagian, yaitu kepala, badan, dan ekor
+Pemain bertujuan untuk memakan setiap apple yang ada di dalam arena dan memanjangkan
+badannya hingga ular terbentur dengan collision yang terdiri atas dinding dari arena
+dan badan dari ular tersebut. Setiap apple yang dimakan akan menambah satu badan yang
+akan digerakkan oleh pemain.
+
+Pergerakan dari ular akan dibuat dengan menggunakan sistem koordinat, setiap game objek
+akan berada dalam koordinat x dan y (x, y) tidak berdasarkan resolusi dari pixel smartphone
+melainkan posisi dalam grid virtual yang akan dibuat.
+
+Apabila ular keluar dari kotak yang telah dibuat, maka variabel dead pada ular akan
+true dan akan mengulang ular lagi dalam kondisi sebelumnya beserta dengan badannya.
+
