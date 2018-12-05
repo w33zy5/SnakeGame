@@ -157,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
             long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
             /*Untuk menyimpan frame pada saat aplikasi di keluarkan sementara*/
             long timeToSleep = 500 - timeThisFrame;
-            /*Menyimpan fps*/
+            /*Menyimpan fps*//*
             if(timeThisFrame > 0){
                 fps = (int)(1000/timeThisFrame);
-            }
+            }*/
             /*Jika aplikasi di pause*/
             if(timeToSleep > 0){
                 try{

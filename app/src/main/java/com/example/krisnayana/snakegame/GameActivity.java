@@ -87,23 +87,39 @@ public class GameActivity extends Activity {
     }
 
     private void configureDisplay() {
+        /*Mengetahui ukuran dari layar
+        * Deklarasi Display dan dinamakan dengan display
+        * setelah itu menyimpan nilai display dengan getWindowManager().getDefaultDisplay()*/
         Display display = getWindowManager().getDefaultDisplay();
+        /*Deklarasi Point untuk menyimpan nilai display*/
         Point size = new Point();
+        /*display akan mengambil nilai dalam variabel size yang khusus untuk menyimpan point*/
         display.getSize(size);
+        /*14:10:50.792 31296-31296/com.example.krisnayana.snakegame E/size,: Point(720, 1280)*/
+        Log.e("size, ", String.valueOf(size));
+        /*size.x akan disimpan dalam screenWidth*/
         screenWidth = size.x;
+        /*size.y akan disimpan dalam screenHeight*/
         screenHeight = size.y;
+        /*topGap untuk menaruh teks dibuat dengan membagi screenHeight dengan 14*/
         topGap = screenHeight/14;
 
+        /*Menentukan ukuran block yang diinginkan untuk memenuhi tinggi dan lebar layar*/
         blockSize = screenWidth/40;
-
+        /*apabila di atas 40, maka dibawah juga 40*/
+        /*Menentuk seberapa banyak block game yang akan memenuhi tinggi dan lebar permainan*/
         numBlocksWide = 40;
+        /*menentukan tinggi arena, dikurangi topGap untuk menaruh teks ke depannya kemudian dibagi blockSize
+        * untuk mendapatkan hasil akhir*/
         numBlocksHigh = ((screenHeight - topGap))/blockSize;
 
+        /*Mendeklarasikan bitmap dalam satu variabel*/
         headBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head);
         bodyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.body);
         tailBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.tail);
         appleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
 
+        /*Mengubah skala dari bitmap untuk menyesuaikan dengan ukuran block/blockSize agar sesuai dengan arena permainan*/
         headBitmap = Bitmap.createScaledBitmap(headBitmap, blockSize, blockSize, false);
         bodyBitmap = Bitmap.createScaledBitmap(bodyBitmap, blockSize, blockSize, false);
         tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
@@ -112,9 +128,13 @@ public class GameActivity extends Activity {
     }
 
     private void loadSound() {
+        /*Memasang pemutar suara*/
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         try{
+            /*Mendeklarasikan asset manager untuk membuka isi aplikasi dan mencari suara
+            * dan descriptor*/
             AssetManager assetManager = getAssets();
+            /*Menyediakan descriptor untuk menyimpan dan membaca data suara*/
             AssetFileDescriptor descriptor;
 
             descriptor = assetManager.openFd("sample1.ogg");
@@ -153,12 +173,18 @@ public class GameActivity extends Activity {
         snakeView.pause();
     }
 
+    /*Method untuk menerima input back dari smartphone android*/
     public boolean onKeyDown(int keyCode, KeyEvent event){
+        /*Apabila tombol back ditekan*/
         if(keyCode == KeyEvent.KEYCODE_BACK){
+            /*SnakeView di pause*/
             snakeView.pause();
 
+            /*Intent i dideklarasikan dengan class MainActivity*/
             Intent i = new Intent(this, MainActivity.class);
+            /*Dan memulai main menu*/
             startActivity(i);
+            /*dan menyelesaikannya*/
             finish();
             return true;
         }
@@ -167,11 +193,14 @@ public class GameActivity extends Activity {
 
     /*Sama seperti kelas MainActivity*/
     class SnakeView extends SurfaceView implements Runnable{
+        /*Mendeklarasikan Thread untuk menjalankan, meng-animasikan dan menyimpan seluruh kegiatan*/
         Thread ourThread = null;
+        /*Mendeklarasikan holder untuk menampilkan gambar permainan*/
         SurfaceHolder ourHolder;
         volatile boolean playingSnake;
         Paint paint;
 
+        /*Method untuk meng-animasikan dan menjalankan permainan*/
         public SnakeView(Context context) {
             super(context);
             /*Memanggil holder*/
@@ -197,7 +226,7 @@ public class GameActivity extends Activity {
             appleY = random.nextInt(numBlocksHigh);
         }
 
-        /*Method untuk memunculkan ular*/
+        /*Method untuk memunculkan ular di tengah layar smartphone*/
         private void getSnake() {
             /*Deklarasi panjang dari ular*/
             snakeLength = 3;
@@ -258,11 +287,11 @@ public class GameActivity extends Activity {
             /*Variabel untuk menampung waktu jeda per frame semakin besar waktu yang
             * harus dikurangi oleh timeThisFrame, maka semakin lama jeda antar frame*/
             long timeToSleep = 100 - timeThisFrame;
+            /*Menghitung fps*//*
             if(timeThisFrame > 0){
-                /*Menghitung fps*/
                 Log.e("fps: ", String.valueOf(fps));
                 fps = (int)(1000/timeThisFrame);
-            }
+            }*/
             if(timeToSleep > 0){
                 try {
                     /*Mengambil waktu untuk jeda dengan waktu berdasarkan variable timeToSleep*/
@@ -275,35 +304,65 @@ public class GameActivity extends Activity {
             lastFrameTime = System.currentTimeMillis();
         }
 
+        /*Method untuk memasang gambar dari ular dan memasang arena
+        * Method ini dipanggil berkali kali bersama dengan update dan controlFPS untuk menghasilkan
+        * gerakan dinamis permainan.*/
         private void drawGame() {
             if(ourHolder.getSurface().isValid()){
+                /*Lock canvas sebelum di post dalam aplikasi*/
                 canvas = ourHolder.lockCanvas();
+                /*Membuat layar hitam*/
                 canvas.drawColor(Color.BLACK);
+                /*Set warna garis yang akan ditampilkan (Putih)*/
                 paint.setColor(Color.argb(255,255,255,255));
+                /*Memasang ukuran dari font setengah dari space layar*/
                 paint.setTextSize(topGap/2);
+                /*Set posisi teks dengan x sedikit menjauh dari ujung layar dan kurang dari bagian atas arena permainan (x:10, y:topGap-6)*/
                 canvas.drawText("Score: "+ score + " Hi: "+hi, 10, topGap-6, paint);
 
+                /*Set tebal garis pembatas untuk digambar nantinya*/
                 paint.setStrokeWidth(3);
+
+                /* Bagian ini untuk membuat garis pembatas dengan canvas.drawLine(), apa yang diterima line ini sebagai berikut
+                canvas.drawLine(float startX, float startY, float stopX, float stopY, Paint paint)*/
+                Log.e("topGap, ", String.valueOf(topGap));
+                Log.e("numBlocksHigh, ", String.valueOf(numBlocksHigh));
+                Log.e("numBlocksWide", String.valueOf(numBlocksWide));
+                Log.e("screenWidth, ", String.valueOf(screenWidth));
+
+                /*Garis atas*/
                 canvas.drawLine(1, topGap, screenWidth-1, topGap, paint);
+                /*Garis kanan*/
                 canvas.drawLine(screenWidth-1, topGap, screenWidth-1,topGap+(numBlocksHigh*blockSize),paint);
+                /*Garis bawah*/
                 canvas.drawLine(screenWidth-1, topGap+(numBlocksHigh*blockSize),1,topGap+(numBlocksHigh*blockSize),paint);
+                /*Garis kiri*/
                 canvas.drawLine(1,topGap,1,topGap+(numBlocksHigh*blockSize),paint);
 
+                /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*/
                 canvas.drawBitmap(headBitmap, snakeX[0]*blockSize,(snakeY[0]*blockSize)+topGap, paint);
 
+                /*Menggambar badan dari ular*/
                 for(int i=1; i<snakeLength-1; i++){
                     canvas.drawBitmap(bodyBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
                 }
 
+                /*Menggambar ekor dari ular*/
                 canvas.drawBitmap(tailBitmap, snakeX[snakeLength - 1]*blockSize, (snakeY[snakeLength - 1]*blockSize)+topGap,paint);
 
+                /*Menggambar apel*/
                 canvas.drawBitmap(appleBitmap, appleX * blockSize, (appleY*blockSize) + topGap, paint);
 
+                /*Unlock canvas dan mem-posting nya dalam screen*/
                 ourHolder.unlockCanvasAndPost(canvas);
             }
         }
 
+        /*Method update game*/
         private void updateGame() {
+            /*Apabila koordinat kepala x dan y sama dengan koordinat x dan y apple
+            * maka snakeLength atau panjang dari ular akan bertambah dan posisi apel yang baru akan berubah
+            * karena method getApple() dipanggil, score bertambah berdasarkan panjang dari ular, dan memulai sound*/
             if(snakeX[0] == appleX && snakeY[0] == appleY){
                 snakeLength++;
                 getApple();
@@ -311,63 +370,99 @@ public class GameActivity extends Activity {
                 soundPool.play(sample1, 1,1,0,0, 1);
             }
 
+            /*Menggerakkan ular dari bagian belakang ular berdasarkan koordinat posisi bagian belakang ular
+            * Karena i menggunakan snakeLength yang akan mengambil panjang dari ular dan menguranginya 1 untuk mengubah
+            * koordinat posisi snakeX dan snakeY*/
             for(int i = snakeLength; i > 0; i--){
                 snakeX[i] = snakeX[i - 1];
                 snakeY[i] = snakeY[i - 1];
             }
 
+            /*Menggerakkan kepala dari ular dengan mengubah directionOfTravel
+            * directionOfTravel diambil dari method onTouchEvent yang mengatur penambahan dan pengurangan nilai directionOfTravel
+            * snakeX[0] dan snakeY[0] adalah kepala dari ular,*/
             switch (directionOfTravel){
                 case 0:
+                    /*Menggerakkan ular ke atas*/
                     snakeY[0] --;
+                    Log.e("Case 0: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 1:
+                    /*Menggerakkan ular ke kanan*/
                     snakeX[0] ++;
+                    Log.e("Case 1: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 2:
+                    /*Menggerakkan ular ke atas*/
                     snakeY[0] ++;
+                    Log.e("Case 2: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 3:
+                    /*Menggerakkan ular ke kiri*/
                     snakeX[0] --;
+                    Log.e("Case 3: ", String.valueOf(directionOfTravel));
                     break;
             }
+            /*boolean dead false ini merupakan variabel yang digunakan untuk melihat apakah
+            * ular keluar dari batas arena permainan atau tidak*/
             boolean dead = false;
+            /*Menyentuh pembatas kiri*/
             if(snakeX[0] == -1)dead = true;
+            /*Menyentuh pembatas kanan*/
             if(snakeX[0] >= numBlocksWide)dead = true;
+            /*Menyentuh pembatas atas*/
             if(snakeY[0] == -1)dead = true;
+            /*Menyentuh pembatas bawah*/
             if(snakeY[0] == numBlocksHigh)dead = true;
 
+            /*Apabila ular menabrak diri sendiri,*/
             for(int i = snakeLength - 1; i>0; i--){
+                /*Apabila panjang dari ular telah lebih dari 4(kenapa 4? karena pemain tidak akan bisa menabrak badan sendiri ketika panjang badan masih kecil)
+                * dan apabila koordinat kepala ular menyentuh koordinat posisi dari badan ular, yaitu snakeX dan snakeY*/
                 if((i > 4) && (snakeX[0] == snakeX[i]) && (snakeY[0] == snakeY[i])){
+                    /*Dead akan menjadi true*/
                     dead = true;
                 }
             }
 
+            /*Jika dead true*/
             if(dead){
+                /*Memainkan audio sample4*/
                 soundPool.play(sample4,1,1,0,0,1);
+                /*score kembali menjadi 0*/
                 score = 0;
+                /*dan mengubah posisi ular dengan memanggil method getSnake()*/
                 getSnake();
             }
         }
 
+        /*Method untuk menerima input pemain*/
         @Override
         public boolean onTouchEvent(MotionEvent motionEvent){
+            /*Switch menerima action dari pemain dengan motionEvent.getAction() dan MotionEvent.ACTION_MASK*/
+            /*Disini switch menggunakan bitwise operator & yang artinya 'bitwise and'
+             * motionEvent.getAction() untuk mengembalikan nilai bit yang dilakukan, MotionEvent.ACTION_MASK juga mengambalikan bit*/
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK){
+                /*Apabila layar smartphone ditekan dan setelah itu diangkat
+                * Apabila telah selesai menekan layar smartphone dan mengangkat jari*/
                 case MotionEvent.ACTION_UP:
                     if(motionEvent.getX() >= screenWidth/2){
                         directionOfTravel ++;
-
+                        /*Apabila directionOfTravel menjadi 4, maka directionOfTravel diubah kembali menjadi 0 agar tidak keluar dari kendali sentuh pemain*/
                         if(directionOfTravel == 4){
                             directionOfTravel = 0;
                         }
                     }else{
                         directionOfTravel--;
+                        /*Apabila directionOfTravel menjadi -1, maka directionOfTravel diubah kembali menjadi 3 agar tidak keluar dari kendali sentuh pemain*/
                         if(directionOfTravel == -1){
                             directionOfTravel = 3;
                         }
                     }
+                    Log.e("directionOfTravel: ", String.valueOf(directionOfTravel));
             }
             return true;
         }
