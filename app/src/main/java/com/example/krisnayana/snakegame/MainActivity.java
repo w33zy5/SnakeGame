@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         display.getSize(size);
         /*size dari layar akan disimpan dalam variabel screenWidth dengan size.x dan screenHeight dengan size.y*/
         screenWidth = size.x;
-        screenHeight = size.y;
+        screenHeight = (size.y)-6;
 
         /*Mendeklarasikan headAnimBitmap dengan gambar ular yang telah ada*/
         headAnimBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head_sprite_sheet);

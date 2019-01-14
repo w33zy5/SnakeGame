@@ -111,7 +111,8 @@ public class GameActivity extends Activity {
         numBlocksWide = 40;
         /*menentukan tinggi arena, dikurangi topGap untuk menaruh teks ke depannya kemudian dibagi blockSize
         * untuk mendapatkan hasil akhir*/
-        numBlocksHigh = ((screenHeight - topGap))/blockSize;
+        //Untuk minus 20 yang ada di paling kiri untuk mengurangi tinggi dari arena
+        numBlocksHigh = (((screenHeight - topGap))/blockSize) - 20;
 
         /*Mendeklarasikan bitmap dalam satu variabel*/
         headBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head);
@@ -149,7 +150,8 @@ public class GameActivity extends Activity {
             descriptor = assetManager.openFd("sample4.ogg");
             sample4 = soundPool.load(descriptor, 0);
         }catch (IOException e){
-            Log.e("Error", "Failed to load sound files");
+            /*Log.e("Error", "Failed to load sound files");*/
+            e.printStackTrace();
         }
     }
 
@@ -286,12 +288,12 @@ public class GameActivity extends Activity {
             long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
             /*Variabel untuk menampung waktu jeda per frame semakin besar waktu yang
             * harus dikurangi oleh timeThisFrame, maka semakin lama jeda antar frame*/
-            long timeToSleep = 100 - timeThisFrame;
-            /*Menghitung fps*//*
+            long timeToSleep = 200 - timeThisFrame;
+            /*Menghitung fps*/
             if(timeThisFrame > 0){
                 Log.e("fps: ", String.valueOf(fps));
                 fps = (int)(1000/timeThisFrame);
-            }*/
+            }
             if(timeToSleep > 0){
                 try {
                     /*Mengambil waktu untuk jeda dengan waktu berdasarkan variable timeToSleep*/
@@ -325,10 +327,10 @@ public class GameActivity extends Activity {
 
                 /* Bagian ini untuk membuat garis pembatas dengan canvas.drawLine(), apa yang diterima line ini sebagai berikut
                 canvas.drawLine(float startX, float startY, float stopX, float stopY, Paint paint)*/
-                Log.e("topGap, ", String.valueOf(topGap));
+                /*Log.e("topGap, ", String.valueOf(topGap));
                 Log.e("numBlocksHigh, ", String.valueOf(numBlocksHigh));
                 Log.e("numBlocksWide", String.valueOf(numBlocksWide));
-                Log.e("screenWidth, ", String.valueOf(screenWidth));
+                Log.e("screenWidth, ", String.valueOf(screenWidth));*/
 
                 /*Garis atas*/
                 canvas.drawLine(1, topGap, screenWidth-1, topGap, paint);
@@ -383,27 +385,31 @@ public class GameActivity extends Activity {
             * snakeX[0] dan snakeY[0] adalah kepala dari ular,*/
             switch (directionOfTravel){
                 case 0:
-                    /*Menggerakkan ular ke atas*/
+                    /*Menggerakkan ular ke bawah*/
                     snakeY[0] --;
-                    Log.e("Case 0: ", String.valueOf(directionOfTravel));
+                    Log.e("snakeY[0] -- :", String.valueOf(snakeY[0]));
+                    //Log.e("Case 0: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 1:
                     /*Menggerakkan ular ke kanan*/
                     snakeX[0] ++;
-                    Log.e("Case 1: ", String.valueOf(directionOfTravel));
+                    Log.e("snakeX[0] ++ :", String.valueOf(snakeX[0]));
+                    //Log.e("Case 1: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 2:
                     /*Menggerakkan ular ke atas*/
                     snakeY[0] ++;
-                    Log.e("Case 2: ", String.valueOf(directionOfTravel));
+                    Log.e("snakeY[0] ++ :", String.valueOf(snakeY[0]));
+                    //Log.e("Case 2: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 3:
                     /*Menggerakkan ular ke kiri*/
                     snakeX[0] --;
-                    Log.e("Case 3: ", String.valueOf(directionOfTravel));
+                    Log.e("snakeX[0] -- :", String.valueOf(snakeX[0]));
+                    //Log.e("Case 3: ", String.valueOf(directionOfTravel));
                     break;
             }
             /*boolean dead false ini merupakan variabel yang digunakan untuk melihat apakah
@@ -449,14 +455,38 @@ public class GameActivity extends Activity {
                 /*Apabila layar smartphone ditekan dan setelah itu diangkat
                 * Apabila telah selesai menekan layar smartphone dan mengangkat jari*/
                 case MotionEvent.ACTION_UP:
-                    if(motionEvent.getX() >= screenWidth/2){
+                    int x = (int) motionEvent.getX();
+                    int y = (int) motionEvent.getY();
+                    //float terms1 = (motionEvent.getX() - snakeX[0])/2;
+                    float terms2 = (motionEvent.getX() - snakeX[0]);
+                    //float terms3 = (motionEvent.getX() * 0)+snakeX[0];
+                    //float terms4 = (terms2 + screenWidth)/2;
+                    float terms5 = (screenWidth - snakeX[0])/2;
+                    float target = (snakeX[0]/2);
+
+                    //Log.d("VTERMS", "terms1 : " + terms1);
+                    Log.d("VTERMS", "terms2 : " + terms2);
+                    Log.d("VTERMS", "terms5 : " + terms5);
+                    //Log.d("VTERMS", "terms4 : " + terms4);
+                    Log.d("VTERMS", "target : " + target);
+                    Log.d("MOVE", "x : " + String.valueOf(x));
+                    Log.d("MOVE", "y : " + String.valueOf(y));
+                    //1# if(motionEvent.getX() >= screenWidth/2)
+                    //2# if(snakeX[0] >= snakeX[0]/2)
+                    //3# if((terms) >= (target))
+                    if(terms2 >= terms5){
                         directionOfTravel ++;
+                        if(directionOfTravel == 0){
+
+                        }
+                        Log.d("VTERMS_COND", "DoT 1 : " + true);
                         /*Apabila directionOfTravel menjadi 4, maka directionOfTravel diubah kembali menjadi 0 agar tidak keluar dari kendali sentuh pemain*/
                         if(directionOfTravel == 4){
                             directionOfTravel = 0;
                         }
                     }else{
                         directionOfTravel--;
+                        Log.d("VTERMS_COND", "DoT 2 : " + true);
                         /*Apabila directionOfTravel menjadi -1, maka directionOfTravel diubah kembali menjadi 3 agar tidak keluar dari kendali sentuh pemain*/
                         if(directionOfTravel == -1){
                             directionOfTravel = 3;
