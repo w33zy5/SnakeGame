@@ -1,5 +1,6 @@
 package com.example.krisnayana.snakegame;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.util.Random;
@@ -36,12 +40,7 @@ public class GameActivity extends Activity {
     /*Variable untuk menampung bitmap kepala, badan, ekor ular dan apel*/
     Bitmap headBitmap, bodyBitmap, tailBitmap, appleBitmap;
 
-    /*Variable untuk menampung suara*/
-    private SoundPool soundPool;
-    int sample1 = -1;
-    int sample2 = -1;
-    int sample3 = -1;
-    int sample4 = -1;
+    int [] snakeH;
 
     /*Variabel untuk menampung pergerakan dari ular nantinya*/
     int directionOfTravel = 0;
@@ -77,7 +76,7 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         /*Method untuk memasang suara*/
-        loadSound();
+        /*loadSound();*/
         /*Method untuk mengatur display layar permainan*/
         configureDisplay();
         /*Deklarasi untuk pengendali utama dari permainan*/
@@ -125,34 +124,6 @@ public class GameActivity extends Activity {
         bodyBitmap = Bitmap.createScaledBitmap(bodyBitmap, blockSize, blockSize, false);
         tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
         appleBitmap = Bitmap.createScaledBitmap(appleBitmap, blockSize, blockSize, false);
-
-    }
-
-    private void loadSound() {
-        /*Memasang pemutar suara*/
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        try{
-            /*Mendeklarasikan asset manager untuk membuka isi aplikasi dan mencari suara
-            * dan descriptor*/
-            AssetManager assetManager = getAssets();
-            /*Menyediakan descriptor untuk menyimpan dan membaca data suara*/
-            AssetFileDescriptor descriptor;
-
-            descriptor = assetManager.openFd("sample1.ogg");
-            sample1 = soundPool.load(descriptor, 0);
-
-            descriptor = assetManager.openFd("sample2.ogg");
-            sample2 = soundPool.load(descriptor, 0);
-
-            descriptor = assetManager.openFd("sample3.ogg");
-            sample3 = soundPool.load(descriptor, 0);
-
-            descriptor = assetManager.openFd("sample4.ogg");
-            sample4 = soundPool.load(descriptor, 0);
-        }catch (IOException e){
-            /*Log.e("Error", "Failed to load sound files");*/
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -369,7 +340,6 @@ public class GameActivity extends Activity {
                 snakeLength++;
                 getApple();
                 score = score + snakeLength;
-                soundPool.play(sample1, 1,1,0,0, 1);
             }
 
             /*Menggerakkan ular dari bagian belakang ular berdasarkan koordinat posisi bagian belakang ular
@@ -436,8 +406,6 @@ public class GameActivity extends Activity {
 
             /*Jika dead true*/
             if(dead){
-                /*Memainkan audio sample4*/
-                soundPool.play(sample4,1,1,0,0,1);
                 /*score kembali menjadi 0*/
                 score = 0;
                 /*dan mengubah posisi ular dengan memanggil method getSnake()*/
@@ -495,6 +463,9 @@ public class GameActivity extends Activity {
                     Log.e("directionOfTravel: ", String.valueOf(directionOfTravel));
             }
             return true;
+        }
+        public void onClick(GameActivity dataChanged){
+
         }
     }
 }
