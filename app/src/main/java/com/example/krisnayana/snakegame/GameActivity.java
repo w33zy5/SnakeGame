@@ -146,7 +146,7 @@ public class GameActivity extends Activity  {
         matrix90.postRotate(90);
         matrix180.postRotate(180);
         matrix270.postRotate(270);
-        //And now the head flipper
+
         matrixHeadFlip.setScale(-1,1);
         matrixHeadFlip.postTranslate(headBitmap.getWidth(),0);
     }
@@ -369,44 +369,31 @@ public class GameActivity extends Activity  {
                         rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix270, true);
                         break;
                     case 1://right
-                        //no rotation necessary
-
                         break;
                     case 2://down
                         rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix90, true);
                         break;
-
                     case 3://left
                         rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrixHeadFlip, true);
                         break;
-
-
                 }
                 canvas.drawBitmap(rotatedBitmap, snakeX[0]*blockSize, (snakeY[0]*blockSize)+topGap, paint);
-                //Draw the body
 
                 rotatedBitmap = bodyBitmap;
                 for(int i = 1; i < snakeLength-1;i++){
-
                     switch (snakeH[i]){
                         case 0://up
                             rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix270, true);
                             break;
                         case 1://right
-                            //no rotation necessary
-
                             break;
                         case 2://down
                             rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix90, true);
                             break;
-
                         case 3://left
                             rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix180, true);
                             break;
-
-
                     }
-
                     canvas.drawBitmap(rotatedBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
                 }
 
@@ -417,20 +404,14 @@ public class GameActivity extends Activity  {
                         rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix270, true);
                         break;
                     case 1://right
-                        //no rotation necessary
-
                         break;
                     case 2://down
                         rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix90, true);
                         break;
-
                     case 3://left
                         rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix180, true);
                         break;
-
-
                 }
-
                 canvas.drawBitmap(rotatedTailBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
 
                 /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*//*
