@@ -73,10 +73,6 @@ public class GameActivity extends Activity  {
 
     //endregion
 
-    public void testSwipe(Display display){
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
