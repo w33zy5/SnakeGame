@@ -44,9 +44,6 @@ public class GameActivity extends Activity  {
 
     /*Variable untuk menampung bitmap kepala, badan, ekor ular dan apel*/
     Bitmap headBitmap, bodyBitmap, tailBitmap, appleBitmap;
-    Bitmap testBitmap;
-
-    int [] snakeH;
 
     /*Variabel untuk menampung pergerakan dari ular nantinya*/
     int directionOfTravel = 0;
@@ -65,6 +62,7 @@ public class GameActivity extends Activity  {
     /*Untuk menyimpan koordinat pergerakan dari ular*/
     int [] snakeX;
     int [] snakeY;
+    int [] snakeH;
     /*Menyimpan panjang dari ular*/
     int snakeLength;
     /*Menyimpan koordinat letak apel*/
@@ -144,6 +142,13 @@ public class GameActivity extends Activity  {
         bodyBitmap = Bitmap.createScaledBitmap(bodyBitmap, blockSize, blockSize, false);
         tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
         appleBitmap = Bitmap.createScaledBitmap(appleBitmap, blockSize, blockSize, false);
+
+        matrix90.postRotate(90);
+        matrix180.postRotate(180);
+        matrix270.postRotate(270);
+        //And now the head flipper
+        matrixHeadFlip.setScale(-1,1);
+        matrixHeadFlip.postTranslate(headBitmap.getWidth(),0);
     }
 
     @Override
@@ -204,6 +209,7 @@ public class GameActivity extends Activity  {
             /*Menyimpan panjang dari ular dan untuk menyimpan pergerakan dari ular*/
             snakeX = new int[200];
             snakeY = new int[200];
+            snakeH = new int[200];
 
             /*Memanggil method untuk memanggil ular*/
             getSnake();
@@ -354,16 +360,89 @@ public class GameActivity extends Activity  {
                 canvas.drawText("Kiri", 370,1110, paint);
                 canvas.drawText("Kanan", 550, 1110, paint);
 
-                /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*/
+                Bitmap rotatedBitmap;
+                Bitmap rotatedTailBitmap;
+
+                rotatedBitmap = headBitmap;
+                switch (snakeH[0]){
+                    case 0://up
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix270, true);
+                        break;
+                    case 1://right
+                        //no rotation necessary
+
+                        break;
+                    case 2://down
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix90, true);
+                        break;
+
+                    case 3://left
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrixHeadFlip, true);
+                        break;
+
+
+                }
+                canvas.drawBitmap(rotatedBitmap, snakeX[0]*blockSize, (snakeY[0]*blockSize)+topGap, paint);
+                //Draw the body
+
+                rotatedBitmap = bodyBitmap;
+                for(int i = 1; i < snakeLength-1;i++){
+
+                    switch (snakeH[i]){
+                        case 0://up
+                            rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix270, true);
+                            break;
+                        case 1://right
+                            //no rotation necessary
+
+                            break;
+                        case 2://down
+                            rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix90, true);
+                            break;
+
+                        case 3://left
+                            rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix180, true);
+                            break;
+
+
+                    }
+
+                    canvas.drawBitmap(rotatedBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
+                }
+
+                rotatedTailBitmap = tailBitmap;
+
+                switch (snakeH[snakeLength-1]){
+                    case 0://up
+                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix270, true);
+                        break;
+                    case 1://right
+                        //no rotation necessary
+
+                        break;
+                    case 2://down
+                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix90, true);
+                        break;
+
+                    case 3://left
+                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix180, true);
+                        break;
+
+
+                }
+
+                canvas.drawBitmap(rotatedTailBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
+
+                /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*//*
                 canvas.drawBitmap(headBitmap, snakeX[0]*blockSize,(snakeY[0]*blockSize)+topGap, paint);
 
-                /*Menggambar badan dari ular*/
+                *//*Menggambar badan dari ular*//*
                 for(int i=1; i<snakeLength-1; i++){
                     canvas.drawBitmap(bodyBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
                 }
 
-                /*Menggambar ekor dari ular*/
-                canvas.drawBitmap(tailBitmap, snakeX[snakeLength - 1]*blockSize, (snakeY[snakeLength - 1]*blockSize)+topGap,paint);
+                *//*Menggambar ekor dari ular*//*
+                canvas.drawBitmap(tailBitmap, snakeX[snakeLength - 1]*blockSize, (snakeY[snakeLength - 1]*blockSize)+topGap,paint);*/
 
                 /*Menggambar apel*/
                 canvas.drawBitmap(appleBitmap, appleX * blockSize, (appleY*blockSize) + topGap, paint);
@@ -390,6 +469,8 @@ public class GameActivity extends Activity  {
             for(int i = snakeLength; i > 0; i--){
                 snakeX[i] = snakeX[i - 1];
                 snakeY[i] = snakeY[i - 1];
+
+                snakeH[i] = snakeH[i-1];
             }
 
             /*Menggerakkan kepala dari ular dengan mengubah directionOfTravel
@@ -399,6 +480,7 @@ public class GameActivity extends Activity  {
                 case 0:
                     /*Menggerakkan ular ke atas*/
                     snakeY[0] --;
+                    snakeH[0] = 0;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] -- :", String.valueOf(snakeY[0]));
                     //Log.e("Case 0: ", String.valueOf(directionOfTravel));
@@ -407,6 +489,7 @@ public class GameActivity extends Activity  {
                 case 1:
                     /*Menggerakkan ular ke kanan*/
                     snakeX[0] ++;
+                    snakeH[0] = 1;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] ++ :", String.valueOf(snakeX[0]));
                     //Log.e("Case 1: ", String.valueOf(directionOfTravel));
@@ -415,6 +498,7 @@ public class GameActivity extends Activity  {
                 case 2:
                     /*Menggerakkan ular ke bawah*/
                     snakeY[0] ++;
+                    snakeH[0] = 2;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] ++ :", String.valueOf(snakeY[0]));
                     //Log.e("Case 2: ", String.valueOf(directionOfTravel));
@@ -423,6 +507,7 @@ public class GameActivity extends Activity  {
                 case 3:
                     /*Menggerakkan ular ke kiri*/
                     snakeX[0] --;
+                    snakeH[0] = 3;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] -- :", String.valueOf(snakeX[0]));
                     //Log.e("Case 3: ", String.valueOf(directionOfTravel));
