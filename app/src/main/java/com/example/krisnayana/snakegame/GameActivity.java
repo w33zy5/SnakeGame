@@ -71,14 +71,17 @@ public class GameActivity extends Activity  {
     int appleX;
     int appleY;
 
-    Matrix matrix90 = new Matrix();
-    Matrix matrix180 = new Matrix();
-    Matrix matrix270 = new Matrix();
-
     /*Menyimpan ukuran dari arena*/
     int blockSize;
     int numBlocksWide;
     int numBlocksHigh;
+
+    Matrix matrix90 = new Matrix();
+    Matrix matrix180 = new Matrix();
+    Matrix matrix270 = new Matrix();
+
+    Matrix matrixHeadFlip = new Matrix();
+
     //endregion
 
     public void testSwipe(Display display){
