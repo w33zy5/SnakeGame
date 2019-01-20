@@ -413,17 +413,6 @@ public class GameActivity extends Activity  {
                 }
                 canvas.drawBitmap(rotatedBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
 
-                /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*//*
-                canvas.drawBitmap(headBitmap, snakeX[0]*blockSize,(snakeY[0]*blockSize)+topGap, paint);
-
-                *//*Menggambar badan dari ular*//*
-                for(int i=1; i<snakeLength-1; i++){
-                    canvas.drawBitmap(bodyBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
-                }
-
-                *//*Menggambar ekor dari ular*//*
-                canvas.drawBitmap(tailBitmap, snakeX[snakeLength - 1]*blockSize, (snakeY[snakeLength - 1]*blockSize)+topGap,paint);*/
-
                 /*Menggambar apel*/
                 canvas.drawBitmap(appleBitmap, appleX * blockSize, (appleY*blockSize) + topGap, paint);
 
@@ -543,51 +532,31 @@ public class GameActivity extends Activity  {
                     int y = (int) motionEvent.getY();
                     Log.d("COORDINATE", "X : " + x + " Y : " + y);
 
-                    //float terms1 = (motionEvent.getX() - snakeX[0])/2;
-                    float terms2 = (motionEvent.getX() - snakeX[0]);
-                    //float terms3 = (motionEvent.getX() * 0)+snakeX[0];
-                    //float terms4 = (terms2 + screenWidth)/2;
-                    float terms5 = (screenWidth - snakeX[0])/2;
-                    float target = (snakeX[0]/2);
-
-                    //Log.d("VTERMS", "terms1 : " + terms1);
-                    Log.d("VTERMS", "terms2 : " + terms2);
-                    Log.d("VTERMS", "terms5 : " + terms5);
-                    //Log.d("VTERMS", "terms4 : " + terms4);
-                    Log.d("VTERMS", "target : " + target);
-                    Log.d("MOVE", "x : " + String.valueOf(x));
-                    Log.d("MOVE", "y : " + String.valueOf(y));
-                    //1# if(motionEvent.getX() >= screenWidth/2)
-                    //2# if(snakeX[0] >= snakeX[0]/2)
-                    //3# if((terms) >= (target))
                     if((x >= 0 && x <= 180)  && (y > 1000 && y < 1200)){
+                        /*Menerima input berdasarkan koordinat x (0 - 180) dan y (1000 - 1200)*/
                         //Up
+                        /*Mencegah ular berbelok ke bawah apabila menekan bagian tombol ular ke bawah*/
                         if(directionOfTravel != 2)
                         directionOfTravel = 0;
                         Log.d("DoT", "0:Up " + directionOfTravel);
-                        /*Log.d("VTERMS_COND", "DoT 1 : " + true);
-                        *//*Apabila directionOfTravel menjadi 4, maka directionOfTravel diubah kembali menjadi 0 agar tidak keluar dari kendali sentuh pemain*//*
-                        if(directionOfTravel == 4){
-                            directionOfTravel = 0;
-                        }*/
                     }else if((x > 180 && x <= 360) && (y > 1000 && y < 1200)){
+                        /*Menerima input berdasarkan koordinat x (180 - 360) dan y (1000 - 1200)*/
                         //Down
+                        /*Mencegah ular berbelok ke atas apabila menekan bagian tombol ular ke atas*/
                         if(directionOfTravel != 0)
-                        directionOfTravel = 2;
+                            directionOfTravel = 2;
                         Log.d("DoT", "1:Right " + directionOfTravel);
-                        /*directionOfTravel--;
-                        Log.d("VTERMS_COND", "DoT 2 : " + true);
-                        *//*Apabila directionOfTravel menjadi -1, maka directionOfTravel diubah kembali menjadi 3 agar tidak keluar dari kendali sentuh pemain*//*
-                        if(directionOfTravel == -1){
-                            directionOfTravel = 3;
-                        }*/
                     }else if((x > 360 && x <= 540) && (y > 1000 && y < 1200)){
+                        /*Menerima input berdasarkan koordinat x (360 - 540) dan y (1000 - 1200)*/
                         //Left
+                        /*Mencegah ular berbelok ke kanan apabila menekan bagian tombol ular ke kanan*/
                         if(directionOfTravel != 1)
-                        directionOfTravel = 3;
+                            directionOfTravel = 3;
                         Log.d("DoT", "2:Down " + directionOfTravel);
                     }else if((x > 540 && x <= 720) && (y > 1000 && y < 1200)){
+                        /*Menerima input berdasarkan koordinat x (540 - 720) dan y (1000 - 1200)*/
                         //Right
+                        /*Mencegah ular berbelok ke kanan apabila menekan bagian tombol ular ke kanan*/
                         if(directionOfTravel != 3)
                             directionOfTravel = 1;
                         Log.d("DoT", "3:Left " + directionOfTravel);
