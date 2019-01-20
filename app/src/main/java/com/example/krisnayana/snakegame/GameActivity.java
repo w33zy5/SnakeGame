@@ -1,11 +1,8 @@
 package com.example.krisnayana.snakegame;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,22 +10,13 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.Random;
@@ -74,10 +62,13 @@ public class GameActivity extends Activity  {
     int numBlocksWide;
     int numBlocksHigh;
 
+    //Matrix ini dideklarasikan untuk memutar kepala dan badan dari ular
     Matrix matrix90 = new Matrix();
     Matrix matrix180 = new Matrix();
     Matrix matrix270 = new Matrix();
 
+    /*Matrix matrixHeadFlip ini dideklarasikan untuk memutar kepala secara mirror
+    * membuat kepala dapat menghadap kiri*/
     Matrix matrixHeadFlip = new Matrix();
 
     //endregion
@@ -106,7 +97,6 @@ public class GameActivity extends Activity  {
         * Deklarasi Display dan dinamakan dengan display
         * setelah itu menyimpan nilai display dengan getWindowManager().getDefaultDisplay()*/
         Display display = getWindowManager().getDefaultDisplay();
-        testSwipe(display);
         /*Deklarasi Point untuk menyimpan nilai display*/
         Point size = new Point();
         /*display akan mengambil nilai dalam variabel size yang khusus untuk menyimpan point*/
@@ -143,10 +133,12 @@ public class GameActivity extends Activity  {
         tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
         appleBitmap = Bitmap.createScaledBitmap(appleBitmap, blockSize, blockSize, false);
 
+        //Menyimpan nilai rotasi untuk digunakan memutar kepala dan badan
         matrix90.postRotate(90);
         matrix180.postRotate(180);
         matrix270.postRotate(270);
 
+        //Menyimpan nilai untuk mengubah kepala ular sehingga menghadap kiri
         matrixHeadFlip.setScale(-1,1);
         matrixHeadFlip.postTranslate(headBitmap.getWidth(),0);
     }
@@ -206,7 +198,7 @@ public class GameActivity extends Activity  {
             ourHolder = getHolder();
             paint = new Paint();
 
-            /*Menyimpan panjang dari ular dan untuk menyimpan pergerakan dari ular*/
+            /*Menyimpan panjang, pergerakan, dan rotasi dari ular*/
             snakeX = new int[200];
             snakeY = new int[200];
             snakeH = new int[200];
@@ -355,18 +347,20 @@ public class GameActivity extends Activity  {
                 //Menggambar garis 5 setelah garis 4 yang berada pada koordinat x 720
                 canvas.drawLine(720, 1000, 720, 1200, paint);
 
+                //Memasang teks untuk button dalam permainan ular
                 canvas.drawText("Atas", 10, 1110, paint);
                 canvas.drawText("Bawah", 190,1110, paint);
                 canvas.drawText("Kiri", 370,1110, paint);
                 canvas.drawText("Kanan", 550, 1110, paint);
 
+                //Menyimpan bitmap kepala, badan, dan ekor untuk diputar
                 Bitmap rotatedBitmap;
-                Bitmap rotatedTailBitmap;
 
+                /*Menggambar kepala dari ular dan bersamaan dengan rotasinya*/
                 rotatedBitmap = headBitmap;
                 switch (snakeH[0]){
-                    case 0://up
-                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix270, true);
+                    case 0://up, mengubah rotasi kepala menjadi 270 derajat dengan matrix270
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), matrix270, true);
                         break;
                     case 1://right
                         break;
@@ -374,12 +368,16 @@ public class GameActivity extends Activity  {
                         rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix90, true);
                         break;
                     case 3://left
+                        //matrixHeadFlip digunakan untuk melakukan mirror pada kepala sehingga kepala dapat menghadap kiri
                         rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrixHeadFlip, true);
                         break;
                 }
+                /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan
+                * dan menggunakan bitmap yang telah diputar*/
                 canvas.drawBitmap(rotatedBitmap, snakeX[0]*blockSize, (snakeY[0]*blockSize)+topGap, paint);
 
                 rotatedBitmap = bodyBitmap;
+                /*Perulangan ini digunakan untuk menggambar badan dari ular bersama dengan rotasinya*/
                 for(int i = 1; i < snakeLength-1;i++){
                     switch (snakeH[i]){
                         case 0://up
@@ -394,25 +392,26 @@ public class GameActivity extends Activity  {
                             rotatedBitmap = Bitmap.createBitmap(bodyBitmap , 0, 0, bodyBitmap .getWidth(), bodyBitmap .getHeight(), matrix180, true);
                             break;
                     }
+                    /*Menggambar badan dari ular*/
                     canvas.drawBitmap(rotatedBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
                 }
 
-                rotatedTailBitmap = tailBitmap;
-
+                rotatedBitmap = tailBitmap;
+                /*Menggambar ekor dari ular dan merubah rotasinya sesuai dengan directionoftravel*/
                 switch (snakeH[snakeLength-1]){
                     case 0://up
-                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix270, true);
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix270, true);
                         break;
                     case 1://right
                         break;
                     case 2://down
-                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix90, true);
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix90, true);
                         break;
                     case 3://left
-                        rotatedTailBitmap = Bitmap.createBitmap(rotatedTailBitmap , 0, 0, rotatedTailBitmap .getWidth(), rotatedTailBitmap .getHeight(), matrix180, true);
+                        rotatedBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap .getWidth(), rotatedBitmap .getHeight(), matrix180, true);
                         break;
                 }
-                canvas.drawBitmap(rotatedTailBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
+                canvas.drawBitmap(rotatedBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
 
                 /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*//*
                 canvas.drawBitmap(headBitmap, snakeX[0]*blockSize,(snakeY[0]*blockSize)+topGap, paint);
@@ -451,6 +450,7 @@ public class GameActivity extends Activity  {
                 snakeX[i] = snakeX[i - 1];
                 snakeY[i] = snakeY[i - 1];
 
+                /*Mengubah rotasi dari kepala ular*/
                 snakeH[i] = snakeH[i-1];
             }
 
@@ -461,6 +461,7 @@ public class GameActivity extends Activity  {
                 case 0:
                     /*Menggerakkan ular ke atas*/
                     snakeY[0] --;
+                    /*Mengubah arah kepala ular menghadap atas*/
                     snakeH[0] = 0;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] -- :", String.valueOf(snakeY[0]));
@@ -470,6 +471,7 @@ public class GameActivity extends Activity  {
                 case 1:
                     /*Menggerakkan ular ke kanan*/
                     snakeX[0] ++;
+                    /*Mengubah arah kepala ular menghadap kanan*/
                     snakeH[0] = 1;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] ++ :", String.valueOf(snakeX[0]));
@@ -479,6 +481,7 @@ public class GameActivity extends Activity  {
                 case 2:
                     /*Menggerakkan ular ke bawah*/
                     snakeY[0] ++;
+                    /*MEngubah arah kepala ular menghadap bawah*/
                     snakeH[0] = 2;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] ++ :", String.valueOf(snakeY[0]));
@@ -488,6 +491,7 @@ public class GameActivity extends Activity  {
                 case 3:
                     /*Menggerakkan ular ke kiri*/
                     snakeX[0] --;
+                    /*Mengubah arah kepala ular menghadap kiri*/
                     snakeH[0] = 3;
                     Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] -- :", String.valueOf(snakeX[0]));
@@ -556,7 +560,7 @@ public class GameActivity extends Activity  {
                     //1# if(motionEvent.getX() >= screenWidth/2)
                     //2# if(snakeX[0] >= snakeX[0]/2)
                     //3# if((terms) >= (target))
-                    if(x >= 0 && x <= 180){
+                    if((x >= 0 && x <= 180)  && (y > 1000 && y < 1200)){
                         //Up
                         if(directionOfTravel != 2)
                         directionOfTravel = 0;
@@ -566,7 +570,7 @@ public class GameActivity extends Activity  {
                         if(directionOfTravel == 4){
                             directionOfTravel = 0;
                         }*/
-                    }else if(x > 180 && x <= 360){
+                    }else if((x > 180 && x <= 360) && (y > 1000 && y < 1200)){
                         //Down
                         if(directionOfTravel != 0)
                         directionOfTravel = 2;
@@ -577,12 +581,12 @@ public class GameActivity extends Activity  {
                         if(directionOfTravel == -1){
                             directionOfTravel = 3;
                         }*/
-                    }else if(x > 360 && x <= 540){
+                    }else if((x > 360 && x <= 540) && (y > 1000 && y < 1200)){
                         //Left
                         if(directionOfTravel != 1)
                         directionOfTravel = 3;
                         Log.d("DoT", "2:Down " + directionOfTravel);
-                    }else{
+                    }else if((x > 540 && x <= 720) && (y > 1000 && y < 1200)){
                         //Right
                         if(directionOfTravel != 3)
                             directionOfTravel = 1;
