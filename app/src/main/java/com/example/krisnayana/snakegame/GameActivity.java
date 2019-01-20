@@ -10,11 +10,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -23,12 +25,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.Random;
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity  {
 
 
     //region Bagian Deklarasi
@@ -39,6 +44,7 @@ public class GameActivity extends Activity {
 
     /*Variable untuk menampung bitmap kepala, badan, ekor ular dan apel*/
     Bitmap headBitmap, bodyBitmap, tailBitmap, appleBitmap;
+    Bitmap testBitmap;
 
     int [] snakeH;
 
@@ -65,11 +71,19 @@ public class GameActivity extends Activity {
     int appleX;
     int appleY;
 
+    Matrix matrix90 = new Matrix();
+    Matrix matrix180 = new Matrix();
+    Matrix matrix270 = new Matrix();
+
     /*Menyimpan ukuran dari arena*/
     int blockSize;
     int numBlocksWide;
     int numBlocksHigh;
     //endregion
+
+    public void testSwipe(Display display){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +95,7 @@ public class GameActivity extends Activity {
         configureDisplay();
         /*Deklarasi untuk pengendali utama dari permainan*/
         snakeView = new SnakeView(this);
+
         /*Untuk memulai/memasang method SnakeView pada layar dan memulai permainan*/
         setContentView(snakeView);
     }
@@ -90,6 +105,7 @@ public class GameActivity extends Activity {
         * Deklarasi Display dan dinamakan dengan display
         * setelah itu menyimpan nilai display dengan getWindowManager().getDefaultDisplay()*/
         Display display = getWindowManager().getDefaultDisplay();
+        testSwipe(display);
         /*Deklarasi Point untuk menyimpan nilai display*/
         Point size = new Point();
         /*display akan mengambil nilai dalam variabel size yang khusus untuk menyimpan point*/
@@ -111,7 +127,8 @@ public class GameActivity extends Activity {
         /*menentukan tinggi arena, dikurangi topGap untuk menaruh teks ke depannya kemudian dibagi blockSize
         * untuk mendapatkan hasil akhir*/
         //Untuk minus 20 yang ada di paling kiri untuk mengurangi tinggi dari arena
-        numBlocksHigh = (((screenHeight - topGap))/blockSize) - 20;
+        numBlocksHigh = (((screenHeight - topGap))/blockSize) - 16;
+        Log.d("GAME_VALUE", "numBlocksHigh" + numBlocksHigh);
 
         /*Mendeklarasikan bitmap dalam satu variabel*/
         headBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head);
@@ -163,6 +180,7 @@ public class GameActivity extends Activity {
         }
         return false;
     }
+
 
     /*Sama seperti kelas MainActivity*/
     class SnakeView extends SurfaceView implements Runnable{
@@ -312,6 +330,27 @@ public class GameActivity extends Activity {
                 /*Garis kiri*/
                 canvas.drawLine(1,topGap,1,topGap+(numBlocksHigh*blockSize),paint);
 
+                //Menggambar garis atas button
+                canvas.drawLine(1,1000, 720, 1000, paint);
+                //Menggambar garis bawah button
+                canvas.drawLine(1,1200, 720, 1200, paint);
+
+                //Menggambar garis 1 yang berada paling kiri yang berada pada koordinat x 0
+                canvas.drawLine(1, 1000, 1, 1200, paint);
+                //Menggambar garis 2 setelah garis 1 yang berada pada koordinat x 180
+                canvas.drawLine(180, 1000, 180, 1200, paint);
+                //Menggambar garis 3 setelah garis 2 yang berada pada koordinat x 360
+                canvas.drawLine(360, 1000, 360, 1200, paint);
+                //Menggambar garis 4 setelah garis 3 yang berada pada koordinat x 540
+                canvas.drawLine(540, 1000, 540, 1200, paint);
+                //Menggambar garis 5 setelah garis 4 yang berada pada koordinat x 720
+                canvas.drawLine(720, 1000, 720, 1200, paint);
+
+                canvas.drawText("Atas", 10, 1110, paint);
+                canvas.drawText("Bawah", 190,1110, paint);
+                canvas.drawText("Kiri", 370,1110, paint);
+                canvas.drawText("Kanan", 550, 1110, paint);
+
                 /*Menggambar snake[0] berdasarkan koordinat yang telah diinput dan ukuran dari arena permainan*/
                 canvas.drawBitmap(headBitmap, snakeX[0]*blockSize,(snakeY[0]*blockSize)+topGap, paint);
 
@@ -355,8 +394,9 @@ public class GameActivity extends Activity {
             * snakeX[0] dan snakeY[0] adalah kepala dari ular,*/
             switch (directionOfTravel){
                 case 0:
-                    /*Menggerakkan ular ke bawah*/
+                    /*Menggerakkan ular ke atas*/
                     snakeY[0] --;
+                    Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] -- :", String.valueOf(snakeY[0]));
                     //Log.e("Case 0: ", String.valueOf(directionOfTravel));
                     break;
@@ -364,13 +404,15 @@ public class GameActivity extends Activity {
                 case 1:
                     /*Menggerakkan ular ke kanan*/
                     snakeX[0] ++;
+                    Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] ++ :", String.valueOf(snakeX[0]));
                     //Log.e("Case 1: ", String.valueOf(directionOfTravel));
                     break;
 
                 case 2:
-                    /*Menggerakkan ular ke atas*/
+                    /*Menggerakkan ular ke bawah*/
                     snakeY[0] ++;
+                    Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeY[0] ++ :", String.valueOf(snakeY[0]));
                     //Log.e("Case 2: ", String.valueOf(directionOfTravel));
                     break;
@@ -378,6 +420,7 @@ public class GameActivity extends Activity {
                 case 3:
                     /*Menggerakkan ular ke kiri*/
                     snakeX[0] --;
+                    Log.d("snakeXY[0]", "X : " + snakeX[0] + " Y : " + snakeY[0]);
                     Log.e("snakeX[0] -- :", String.valueOf(snakeX[0]));
                     //Log.e("Case 3: ", String.valueOf(directionOfTravel));
                     break;
@@ -396,9 +439,9 @@ public class GameActivity extends Activity {
 
             /*Apabila ular menabrak diri sendiri,*/
             for(int i = snakeLength - 1; i>0; i--){
-                /*Apabila panjang dari ular telah lebih dari 4(kenapa 4? karena pemain tidak akan bisa menabrak badan sendiri ketika panjang badan masih kecil)
+                /*Apabila panjang dari ular telah lebih dari 2(kenapa 2? karena pemain tidak akan bisa menabrak badan sendiri ketika panjang badan masih kecil)
                 * dan apabila koordinat kepala ular menyentuh koordinat posisi dari badan ular, yaitu snakeX dan snakeY*/
-                if((i > 4) && (snakeX[0] == snakeX[i]) && (snakeY[0] == snakeY[i])){
+                if((i > 2) && (snakeX[0] == snakeX[i]) && (snakeY[0] == snakeY[i])){
                     /*Dead akan menjadi true*/
                     dead = true;
                 }
@@ -425,6 +468,8 @@ public class GameActivity extends Activity {
                 case MotionEvent.ACTION_UP:
                     int x = (int) motionEvent.getX();
                     int y = (int) motionEvent.getY();
+                    Log.d("COORDINATE", "X : " + x + " Y : " + y);
+
                     //float terms1 = (motionEvent.getX() - snakeX[0])/2;
                     float terms2 = (motionEvent.getX() - snakeX[0]);
                     //float terms3 = (motionEvent.getX() * 0)+snakeX[0];
@@ -442,30 +487,40 @@ public class GameActivity extends Activity {
                     //1# if(motionEvent.getX() >= screenWidth/2)
                     //2# if(snakeX[0] >= snakeX[0]/2)
                     //3# if((terms) >= (target))
-                    if(terms2 >= terms5){
-                        directionOfTravel ++;
-                        if(directionOfTravel == 0){
-
-                        }
-                        Log.d("VTERMS_COND", "DoT 1 : " + true);
-                        /*Apabila directionOfTravel menjadi 4, maka directionOfTravel diubah kembali menjadi 0 agar tidak keluar dari kendali sentuh pemain*/
+                    if(x >= 0 && x <= 180){
+                        //Up
+                        if(directionOfTravel != 2)
+                        directionOfTravel = 0;
+                        Log.d("DoT", "0:Up " + directionOfTravel);
+                        /*Log.d("VTERMS_COND", "DoT 1 : " + true);
+                        *//*Apabila directionOfTravel menjadi 4, maka directionOfTravel diubah kembali menjadi 0 agar tidak keluar dari kendali sentuh pemain*//*
                         if(directionOfTravel == 4){
                             directionOfTravel = 0;
-                        }
-                    }else{
-                        directionOfTravel--;
+                        }*/
+                    }else if(x > 180 && x <= 360){
+                        //Down
+                        if(directionOfTravel != 0)
+                        directionOfTravel = 2;
+                        Log.d("DoT", "1:Right " + directionOfTravel);
+                        /*directionOfTravel--;
                         Log.d("VTERMS_COND", "DoT 2 : " + true);
-                        /*Apabila directionOfTravel menjadi -1, maka directionOfTravel diubah kembali menjadi 3 agar tidak keluar dari kendali sentuh pemain*/
+                        *//*Apabila directionOfTravel menjadi -1, maka directionOfTravel diubah kembali menjadi 3 agar tidak keluar dari kendali sentuh pemain*//*
                         if(directionOfTravel == -1){
                             directionOfTravel = 3;
-                        }
+                        }*/
+                    }else if(x > 360 && x <= 540){
+                        //Left
+                        if(directionOfTravel != 1)
+                        directionOfTravel = 3;
+                        Log.d("DoT", "2:Down " + directionOfTravel);
+                    }else{
+                        //Right
+                        if(directionOfTravel != 3)
+                            directionOfTravel = 1;
+                        Log.d("DoT", "3:Left " + directionOfTravel);
                     }
-                    Log.e("directionOfTravel: ", String.valueOf(directionOfTravel));
             }
             return true;
-        }
-        public void onClick(GameActivity dataChanged){
-
         }
     }
 }
